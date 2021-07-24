@@ -9,6 +9,28 @@ test.before(async () => {
   await knex('comments').insert(comments)
 })
 
+test.serial('BatchLoader - hasMany with custom select', async (t) => {
+  const batchLoader = new BatchLoader(knexWithLog)
+  const loader = () =>
+    batchLoader.getLoader({
+      foreignKey: 'userId',
+      page: { offset: 5, limit: 10 },
+      targetTable: 'posts',
+      type: 'hasMany',
+      orderBy: ['createdAt', 'asc'],
+      queryModifier: (query) => {
+        query.select('createdAt')
+      },
+    })
+  await Promise.all([
+    loader().load(users[0]!.id),
+    loader().load(users[1]!.id),
+    loader().load(users[2]!.id),
+    loader().load(users[3]!.id),
+    loader().load(users[4]!.id),
+  ]).then(t.snapshot)
+})
+
 test.serial('BatchLoader - hasMany with pagination', async (t) => {
   const batchLoader = new BatchLoader(knexWithLog)
   const loader = () =>

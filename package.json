@@ -14,10 +14,14 @@
     "prepublish": "yarn build",
     "pgcli": "pgcli postgres://postgres:postgres@127.0.0.1:11155/postgres",
     "test": "ava --serial",
-    "build": "rimraf dist && tsc -p tsconfig.prod.json"
+    "build": "npm-run-all build:*",
+    "build:rm": "rimraf dist",
+    "build:rm-lib-ts": "rm -f node_modules/graphql-fields-list/index.ts",
+    "build:src": "tsc -p tsconfig.prod.json"
   },
   "dependencies": {
-    "dataloader": "^2.0.0"
+    "dataloader": "^2.0.0",
+    "graphql-fields-list": "^2.2.4"
   },
   "devDependencies": {
     "@types/node": "^16.4.1",
@@ -25,9 +29,11 @@
     "ava": "^3.15.0",
     "dayjs": "^1.10.6",
     "esbuild-register": "^2.6.0",
+    "graphql": "^15.5.1",
     "knex": "^0.95.7",
     "knex-little-logger": "^0.0.2",
     "knex-stringcase": "^1.4.5",
+    "npm-run-all": "^4.1.5",
     "pg": "^8.6.0",
     "remeda": "^0.0.29",
     "sqlite3": "^5.0.2",
