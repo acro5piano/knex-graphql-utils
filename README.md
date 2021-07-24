@@ -1,5 +1,7 @@
 # knex-graphql-utils
 
+[![npm version](https://badge.fury.io/js/knex-graphql-utils.svg)](https://badge.fury.io/js/knex-graphql-utils)
+
 Set of useful functions for Knex + GraphQL.
 
 - **BatchLoader** Loads and paginates relationship without N+1 problem.
@@ -105,4 +107,3 @@ app.register(mercurius, {
 For more details, please visit demo/ . You can see log output like this:
 
 ![image](https://user-images.githubusercontent.com/10719495/126866657-a6ca9463-bac8-4056-9963-1f0aae8bf7fd.png)
-
