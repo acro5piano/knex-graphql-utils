@@ -30,7 +30,7 @@ const schema = `
   }
   type User {
     id: ID!
-    posts: [Post!]!
+    posts(page: Int!): [Post!]!
   }
   type Post {
     id: ID!
@@ -43,14 +43,14 @@ const resolvers = {
     user: () => knex('users').first(),
   },
   User: {
-    posts: (user, _args, ctx) =>
+    posts: (user, args, ctx) =>
       ctx.batchLoader
         .getLoader({
           type: 'hasMany',
           foreignKey: 'userId',
           targetTable: 'posts',
           page: {
-            offset: 5,
+            offset: (args.page || 1 - 1) * 10,
             limit: 10,
           },
           orderBy: ['createdAt', 'asc'],
