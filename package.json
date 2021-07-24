@@ -1,12 +1,13 @@
 {
   "name": "knex-graphql-utils",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "repository": "git@github.com:acro5piano/knex-graphql-utils",
   "author": "gosho-kazuya <ketsume0211@gmail.com>",
   "license": "MIT",
   "files": [
-    "dist/*"
+    "dist/*",
+    "dist/*.ts"
   ],
   "scripts": {
     "r": "node -r esbuild-register",
