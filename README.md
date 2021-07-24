@@ -100,4 +100,9 @@ app.register(mercurius, {
 })
 ```
 
-![image](https://user-images.githubusercontent.com/10719495/126866590-f28ca719-7868-46a7-a65e-d9723560d8b7.png)
+# Further reading
+
+For more details, please visit demo/ . You can see log output like this:
+
+![image](https://user-images.githubusercontent.com/10719495/126866657-a6ca9463-bac8-4056-9963-1f0aae8bf7fd.png)
+
