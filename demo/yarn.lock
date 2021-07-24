@@ -162,6 +162,11 @@ cookie@^0.4.0:
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.4.1.tgz#afd713fe26ebd21ba95ceb61f9a8116e50a537d1"
   integrity sha512-ZwrFkGJxUR3EIoXtO+yVE69Eb7KlixbaeAWfBQB9vVsNn/o+Yw69gBWSSDK825hQNdN+wF8zELf3dFNl/kxkUA==
 
+dataloader@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/dataloader/-/dataloader-2.0.0.tgz#41eaf123db115987e21ca93c005cd7753c55fe6f"
+  integrity sha512-YzhyDAwA4TaQIhM5go+vCLmU0UikghC/t9DTQYZR2M/UvZ1MdOhPezSDZcjj9uqQJOMqjLcpWtyW2iNINdlatQ==
+
 debug@2.6.9:
   version "2.6.9"
   resolved "https://registry.yarnpkg.com/debug/-/debug-2.6.9.tgz#5d128515df134ff327e90a4c93f4e077a536341f"
@@ -506,6 +511,11 @@ glob@^7.1.4:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
+graphql-fields-list@^2.2.4:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/graphql-fields-list/-/graphql-fields-list-2.2.4.tgz#87a0b24345476400cc027c351550e769b4bf5699"
+  integrity sha512-dhsMajI/7FMeZ8UWJDiw7iZlwacW5eBM02IVJ6IldFNgmVSDeuS+0+wF3ZOB0zcpYl3Q1spuegPLAFKcriPOCw==
+
 graphql-jit@^0.5.1:
   version "0.5.2"
   resolved "https://registry.yarnpkg.com/graphql-jit/-/graphql-jit-0.5.2.tgz#f1fe88e106f6e5b6daa43f9f9a021f733697aee6"
@@ -697,6 +707,14 @@ jsonc-parser@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-3.0.0.tgz#abdd785701c7e7eaca8a9ec8cf070ca51a745a22"
   integrity sha512-fQzRfAbIBnR0IQvftw9FJveWiHp72Fg20giDrHz6TdfB12UH/uue0D3hm57UB5KgAVuniLMCaS8P1IMj9NR7cA==
+
+knex-graphql-utils@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/knex-graphql-utils/-/knex-graphql-utils-0.0.3.tgz#cec22e3122f14616237d4ba226afbbc636529cb1"
+  integrity sha512-bcZ8dxizs88lo1DjnnegOGTX2z5O6spG6zbDYAggAZhK4mNA5i0VwrBSv7OLt7OIUGI8sfEqLjH/ur5jawOlJw==
+  dependencies:
+    dataloader "^2.0.0"
+    graphql-fields-list "^2.2.4"
 
 knex-little-logger@^0.0.2:
   version "0.0.2"

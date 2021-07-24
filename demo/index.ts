@@ -1,7 +1,7 @@
 import Fastify from 'fastify'
 import { GraphQLResolveInfo } from 'graphql'
 import mercurius from 'mercurius'
-import { BatchLoader, SelectionFilter } from '../src'
+import { BatchLoader, SelectionFilter } from 'knex-graphql-utils'
 import { users, posts } from '../tests/fixtures.json'
 
 import { knex } from './knex' // Your knex instance
