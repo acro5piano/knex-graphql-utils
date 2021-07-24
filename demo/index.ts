@@ -11,6 +11,7 @@ const app = Fastify()
 
 const schema = `
   type Query {
+    users: [User!]!
     user: User
   }
   type User {
@@ -30,6 +31,15 @@ const selectionFilter = new SelectionFilter(knex)
 
 const resolvers = {
   Query: {
+    users: (_user: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
+      knex('users')
+        .select(
+          selectionFilter.filterGraphQLSelections({
+            info,
+            table: 'users',
+          }),
+        )
+        .limit(10),
     user: (_user: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
       knex('users')
         .select(
