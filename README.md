@@ -7,11 +7,27 @@ Set of useful functions for Knex + GraphQL.
 - **BatchLoader** Loads and paginates relationship without N+1 problem.
 - **SelectionFilter** Filters selected columns based on GraphQL field selection set.
 
+**Note: Only PostgreSQL is supported for now**
+
 # Install
+
+```
+npm install --save knex-graphql-utils
+```
+
+Or if you use Yarn:
 
 ```
 yarn add knex-graphql-utils
 ```
+
+# Motivation
+
+Creating a GraphQL service with a Relational Database is a hard thing. We should take care of:
+
+- Performance for querying relations. N+1 problem will happen if you don't use Dataloader.
+- `select *` make your server slow, but hard to filter columns based on requests.
+- Pagination. [Dataloader pattern is hard to implement pagination](https://github.com/graphql/dataloader/issues/231) without a hacky `union` or window functions. `knex-graphql-utils` uses `row_number()` window function to do it.
 
 # Getting Started
 
