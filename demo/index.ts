@@ -1,15 +1,19 @@
 import Fastify from 'fastify'
 import { GraphQLResolveInfo } from 'graphql'
 import mercurius from 'mercurius'
-import { BatchLoader, SelectionFilter } from 'knex-graphql-utils'
+// import { BatchLoader, SelectionFilter } from 'knex-graphql-utils'
+import { BatchLoader, SelectionFilter } from '../src'
 import { users, posts } from '../tests/fixtures.json'
+import { knexLittleLogger } from 'knex-little-logger'
 
 import { knex } from './knex' // Your knex instance
 import type { Knex } from 'knex'
 
 const app = Fastify()
 
-const schema = `
+const gql = String.raw
+
+const schema = gql`
   type Query {
     users: [User!]!
     user: User
@@ -33,21 +37,11 @@ const resolvers = {
   Query: {
     users: (_user: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
       knex('users')
-        .select(
-          selectionFilter.filterGraphQLSelections({
-            info,
-            table: 'users',
-          }),
-        )
+        .select(selectionFilter.reduce({ info, table: 'users' }))
         .limit(10),
     user: (_user: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
       knex('users')
-        .select(
-          selectionFilter.filterGraphQLSelections({
-            info,
-            table: 'users',
-          }),
-        )
+        .select(selectionFilter.reduce({ info, table: 'users' }))
         .first(),
   },
   User: {
@@ -63,12 +57,7 @@ const resolvers = {
           },
           orderBy: ['createdAt', 'asc'],
           queryModifier: (query: Knex) => {
-            query.select(
-              selectionFilter.filterGraphQLSelections({
-                info,
-                table: 'posts',
-              }),
-            )
+            query.select(selectionFilter.reduce({ info, table: 'posts' }))
           },
         })
         .load(user.id),
@@ -81,19 +70,23 @@ const resolvers = {
           foreignKey: 'userId',
           targetTable: 'users',
           queryModifier: (query: Knex) => {
-            query.select(
-              selectionFilter.filterGraphQLSelections({
-                info,
-                table: 'users',
-              }),
-            )
+            query.select(selectionFilter.reduce({ info, table: 'users' }))
           },
         })
         .load(post.userId),
   },
 }
 
-app.addHook('onReady', async () => {
+app.register(mercurius, {
+  schema,
+  resolvers,
+  context: () => ({
+    batchLoader: new BatchLoader(knex),
+  }),
+  graphiql: true,
+})
+
+app.listen(8877).then(async () => {
   await knex.raw(`
     DROP SCHEMA public CASCADE;
     CREATE SCHEMA public;
@@ -116,16 +109,7 @@ app.addHook('onReady', async () => {
   await knex('users').insert(users)
   await knex('posts').insert(posts)
 
-  console.log('\n\n=> Open http://localhost:8877/graphiql')
-})
+  knexLittleLogger(knex)
 
-app.register(mercurius, {
-  schema,
-  resolvers,
-  context: () => ({
-    batchLoader: new BatchLoader(knex),
-  }),
-  graphiql: true,
+  console.log('\n=> Open http://localhost:8877/graphiql')
 })
-
-app.listen(8877)

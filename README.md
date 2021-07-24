@@ -46,7 +46,10 @@ const selectionFilter = new SelectionFilter(knex)
 
 const resolvers = {
   Query: {
-    user: () => knex('users').first(),
+    user: (user, args, ctx, info) =>
+      knex('users')
+        .select(selectionFilter.reduce({ info, table: 'users' }))
+        .first(),
   },
   User: {
     posts: (user, args, ctx) =>
@@ -61,12 +64,7 @@ const resolvers = {
           },
           orderBy: ['createdAt', 'asc'],
           queryModifier: (query) => {
-            query.select(
-              selectionFilter.filterGraphQLSelections({
-                info,
-                table: 'posts',
-              }),
-            )
+            query.select(selectionFilter.reduce({ info, table: 'posts' }))
           },
         })
         .load(user.id),
@@ -79,21 +77,12 @@ const resolvers = {
           foreignKey: 'userId',
           targetTable: 'users',
           queryModifier: (query) => {
-            query.select(
-              selectionFilter.filterGraphQLSelections({
-                info,
-                table: 'users',
-              }),
-            )
+            query.select(selectionFilter.reduce({ info, table: 'users' }))
           },
         })
         .load(post.userId),
   },
 }
-
-app.addHook('onReady', async () => {
-  await selectionFilter.prepare(['users', 'posts'], /(_id)|(Id)$/)
-})
 
 app.register(mercurius, {
   schema,
@@ -101,6 +90,10 @@ app.register(mercurius, {
   context: () => ({
     batchLoader: new BatchLoader(knex),
   }),
+})
+
+app.listen(8877).then(async () => {
+  await selectionFilter.prepare(['users', 'posts'], /(_id)|(Id)$/)
 })
 ```
 

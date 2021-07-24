@@ -34,6 +34,9 @@ export class SelectionFilter {
     )
   }
 
+  // Alias method
+  reduce = this.filterGraphQLSelections.bind(this)
+
   filterGraphQLSelections({
     info,
     table,
