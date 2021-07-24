@@ -5,6 +5,9 @@
   "repository": "git@github.com:acro5piano/knex-graphql-utils",
   "author": "gosho-kazuya <ketsume0211@gmail.com>",
   "license": "MIT",
+  "files": [
+    "dist/*"
+  ],
   "scripts": {
     "r": "node -r esbuild-register",
     "prepare": "rm -f node_modules/graphql-fields-list/index.ts",
