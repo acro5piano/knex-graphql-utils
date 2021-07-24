@@ -13,8 +13,6 @@ yarn add knex-graphql-utils
 
 # Getting Started
 
-In the following example, I assume you mount your endopint into `'/graphql'`.
-
 ```typescript
 // app.ts
 
@@ -36,6 +34,7 @@ const schema = `
   }
   type Post {
     id: ID!
+    user: User!
   }
 `
 
@@ -50,10 +49,23 @@ const resolvers = {
           type: 'hasMany',
           foreignKey: 'userId',
           targetTable: 'posts',
-          page: { offset: 5, limit: 10 },
+          page: {
+            offset: 5,
+            limit: 10,
+          },
           orderBy: ['createdAt', 'asc'],
         })
         .load(user.id),
+  },
+  Post: {
+    user: (post, _args, ctx) =>
+      ctx.batchLoader
+        .getLoader({
+          type: 'belongsTo',
+          foreignKey: 'userId',
+          targetTable: 'users',
+        })
+        .load(post.userId),
   },
 }
 
