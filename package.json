@@ -1,0 +1,34 @@
+{
+  "name": "knex-graphql-utils",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "repository": "git@github.com:acro5piano/knex-graphql-utils",
+  "author": "gosho-kazuya <ketsume0211@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "r": "node -r esbuild-register",
+    "prepare": "rm -f node_modules/graphql-fields-list/index.ts",
+    "prepublish": "yarn build",
+    "pgcli": "pgcli postgres://postgres:postgres@127.0.0.1:11155/postgres",
+    "test": "ava --serial",
+    "build": "rimraf dist && tsc -p tsconfig.prod.json"
+  },
+  "dependencies": {
+    "dataloader": "^2.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.4.1",
+    "@types/uuid": "^8.3.1",
+    "ava": "^3.15.0",
+    "dayjs": "^1.10.6",
+    "esbuild-register": "^2.6.0",
+    "knex": "^0.95.7",
+    "knex-little-logger": "^0.0.2",
+    "knex-stringcase": "^1.4.5",
+    "pg": "^8.6.0",
+    "remeda": "^0.0.29",
+    "sqlite3": "^5.0.2",
+    "typescript": "^4.3.5",
+    "uuid": "^8.3.2"
+  }
+}
