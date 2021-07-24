@@ -15,6 +15,8 @@ yarn add knex-graphql-utils
 
 # Getting Started
 
+In this example, I use `mercurius` but this can be applied to any GraphQL frameworks.
+
 ```typescript
 // app.ts
 
@@ -104,6 +106,6 @@ app.register(mercurius, {
 
 # Further reading
 
-For more details, please visit demo/ . You can see log output like this:
+For more details, please visit [demo](https://github.com/acro5piano/knex-graphql-utils/blob/master/demo/index.ts) . You can see log output like this:
 
 ![image](https://user-images.githubusercontent.com/10719495/126866657-a6ca9463-bac8-4056-9963-1f0aae8bf7fd.png)
