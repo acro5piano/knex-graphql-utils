@@ -2,11 +2,20 @@ import Dataloader from 'dataloader'
 import type { GraphQLResolveInfo } from 'graphql'
 import type { Knex } from 'knex'
 import type { SelectionFilter } from './SelectionFilter'
+import { createHasManyLoaderWithPage } from './loaders/createHasManyLoaderWithPage'
+import { createHasManyLoader } from './loaders/createHasManyLoader'
+import { createHasManyThroughLoaderWithPage } from './loaders/createHasManyThroughLoaderWithPage'
+import { createManyToManyLoader } from './loaders/createManyToManyLoader'
+import { createManyToManyLoaderWithPage } from './loaders/createManyToManyLoaderWithPage'
+import { createHasManyThroughLoader } from './loaders/createHasManyThroughLoader'
+import { createBelongsToLoader } from './loaders/createBelongsToLoader'
 
 export type SimplePagenatorArgs = {
   limit: number
   offset: number
 }
+
+export type OrderByType = 'ASC' | 'DESC' | 'asc' | 'desc'
 
 /**
  * LoaderType represents how to load relationships.
@@ -15,7 +24,11 @@ export type SimplePagenatorArgs = {
  * - `belongsTo` n:1 relationship
  * - `hasManyThrough` 1:n relationship through an intermeidate table
  */
-export type LoaderType = 'hasMany' | 'hasManyThrough' | 'belongsTo'
+export type LoaderType =
+  | 'hasMany'
+  | 'hasManyThrough'
+  | 'belongsTo'
+  | 'manyToMany'
 
 export interface GetLoaderProps {
   /**
@@ -52,7 +65,7 @@ export interface GetLoaderProps {
    *
    * @example `orderBy: ['createdAt', 'desc']`
    */
-  orderBy?: [string, string | undefined]
+  orderBy?: [string, OrderByType | undefined]
 
   /**
    * Adds limit and offset to the relations. Default to nothing, meaning that loads all records of the relationship.
@@ -74,7 +87,7 @@ export interface GetLoaderProps {
   info?: GraphQLResolveInfo
 }
 
-interface CreateLoaderProps extends GetLoaderProps {
+export interface CreateLoaderProps extends GetLoaderProps {
   knex: Knex
   selectionFilter?: SelectionFilter
 }
@@ -93,7 +106,7 @@ export class BatchLoader {
   getLoader({
     type,
     targetTable,
-    foreignKey = 'id',
+    foreignKey,
     join,
     page,
     queryModifier,
@@ -112,11 +125,6 @@ export class BatchLoader {
     const maybeLoader = this.loaderMap.get(key)
     if (maybeLoader) {
       return maybeLoader
-    }
-    if (type === 'belongsTo' && page) {
-      throw new Error(
-        '[BatchLoader] Do not add `page` option for relation type `belongsTo.`',
-      )
     }
     const loader = createLoader({
       type,
@@ -138,7 +146,7 @@ export class BatchLoader {
 function createLoader({
   type,
   targetTable,
-  foreignKey = 'id',
+  foreignKey,
   join,
   page,
   knex,
@@ -163,40 +171,31 @@ function createLoader({
     throw new Error('[BatchLoader] That order by is not supported')
   }
 
+  const commonProps = {
+    targetTable,
+    orderByColumn,
+    orderByType,
+    knex,
+    modifyQuery,
+  }
+
   switch (type) {
     case 'hasMany':
+      if (!foreignKey) {
+        throw new Error(
+          '[BatchLoader] foreignKey is required when loading hasMany relationship.',
+        )
+      }
       if (page) {
-        return new Dataloader((ids: readonly string[]) => {
-          const query = knex(
-            knex(targetTable)
-              .select('*')
-              .rowNumber(
-                'relation_index',
-                knex.raw(`partition by ?? order by ?? ${orderByType}`, [
-                  foreignKey,
-                  orderByColumn,
-                ]),
-              )
-              .whereIn(foreignKey, ids)
-              .as('_t'),
-          ).whereBetween(knex.ref('relation_index') as any, [
-            page.offset,
-            page.offset + page.limit,
-          ])
-          modifyQuery(query)
-          return query.then((rows) =>
-            ids.map((id) => rows.filter((row) => row[foreignKey] === id)),
-          )
+        return createHasManyLoaderWithPage({
+          ...commonProps,
+          page,
+          foreignKey,
         })
       } else {
-        return new Dataloader((ids: readonly string[]) => {
-          const query = knex(targetTable)
-            .whereIn(foreignKey, ids)
-            .orderBy(orderByColumn, orderByType)
-          modifyQuery(query)
-          return query.then((rows) =>
-            ids.map((id) => rows.filter((row) => row[foreignKey] === id)),
-          )
+        return createHasManyLoader({
+          ...commonProps,
+          foreignKey,
         })
       }
     case 'hasManyThrough':
@@ -208,52 +207,52 @@ function createLoader({
         throw new Error('[BatchLoader] Invalid `from` key format')
       }
       if (page) {
-        return new Dataloader((ids: readonly string[]) => {
-          const query = knex(
-            knex(targetTable)
-              .select(`${targetTable}.*`, join.from)
-              .rowNumber(
-                'relation_index',
-                knex.raw(`partition by ?? order by ?? ${orderByType}`, [
-                  join.from,
-                  orderByColumn,
-                ]),
-              )
-              .innerJoin(joinTable, `${joinTable}.id`, join.to)
-              .whereIn(join.from, ids)
-              .as('_t'),
-          ).whereBetween(knex.ref('relation_index') as any, [
-            page.offset,
-            page.offset + page.limit,
-          ])
-          modifyQuery(query)
-
-          return query.then((rows) =>
-            ids.map((id) => rows.filter((row) => row[joinColumn] === id)),
-          )
+        return createHasManyThroughLoaderWithPage({
+          ...commonProps,
+          page,
+          join,
+          joinColumn,
+          joinTable,
         })
       } else {
-        return new Dataloader((ids: readonly string[]) => {
-          const query = knex(targetTable)
-            .select(`${targetTable}.*`, join.from)
-            .innerJoin(joinTable, `${joinTable}.id`, join.to)
-            .whereIn(join.from, ids)
-            .orderBy(orderByColumn, orderByType)
-          modifyQuery(query)
-          return query.then((rows) =>
-            ids.map((id) => rows.filter((row) => row[joinColumn] === id)),
-          )
+        return createHasManyThroughLoader({
+          ...commonProps,
+          join,
+          joinColumn,
+          joinTable,
         })
       }
+    case 'manyToMany': {
+      if (!join) {
+        throw new Error('[BatchLoader] no `join` key found')
+      }
+      const [joinTable, joinColumn] = join.from.split('.')
+      if (!joinTable || !joinColumn) {
+        throw new Error('[BatchLoader] Invalid `from` key format')
+      }
+      if (page) {
+        return createManyToManyLoaderWithPage({
+          ...commonProps,
+          page,
+          join,
+          joinColumn,
+          joinTable,
+        })
+      } else {
+        return createManyToManyLoader({
+          ...commonProps,
+          join,
+          joinColumn,
+          joinTable,
+        })
+      }
+    }
     case 'belongsTo':
-      return new Dataloader((ids: readonly string[]) => {
-        const query = knex(targetTable)
-          .whereIn('id', ids)
-          .orderBy(orderByColumn, orderByType)
-        modifyQuery(query)
-        return query.then((rows) =>
-          ids.map((id) => rows.find((row) => row.id === id)),
+      if (page) {
+        throw new Error(
+          '[BatchLoader] Do not add `page` option for relation type `belongsTo.`',
         )
-      })
+      }
+      return createBelongsToLoader({ ...commonProps })
   }
 }
