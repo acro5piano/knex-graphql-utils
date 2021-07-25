@@ -1,6 +1,6 @@
 import test from 'ava'
 import { knexWithLog } from './knex'
-import { users } from './fixtures.json'
+import { users, posts } from './fixtures.json'
 import { BatchLoader } from '../src/index'
 
 test.serial('BatchLoader - hasMany with custom select', async (t) => {
@@ -111,19 +111,21 @@ test.serial('BatchLoader - hasManyThrough without pagination', async (t) => {
     .then(t.snapshot)
 })
 
-// test.serial.only('BatchLoader - manyToMany with pagination', async (t) => {
+// test.serial.only('BatchLoader - manyToMany without pagination', async (t) => {
 //   const batchLoader = new BatchLoader(knexWithLog)
 //   const loader = () =>
 //     batchLoader.getLoader({
 //       type: 'manyToMany',
 //       join: {
-//         from: 'posts.userId',
-//         to: 'comments.postId',
+//         from: 'tagsPosts.postId',
+//         to: 'tagsPosts.tagId',
 //       },
-//       targetTable: 'comments',
+//       targetTable: 'tags',
 //       orderBy: ['posts.createdAt', 'asc'],
 //     })
-//   await Promise.all([loader().load(users[0]!.id), loader().load(users[1]!.id)])
+//   await Promise.all([loader().load(posts[0]!.id), loader().load(posts[1]!.id)])
 //     .then((posts) => posts.flat())
-//     .then(t.snapshot)
+//     .then(log)
+//
+//   t.fail()
 // })
