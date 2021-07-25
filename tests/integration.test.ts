@@ -54,7 +54,7 @@ test.serial('BatchLoader + SelectionFilter', async (t) => {
           return batchLoader
             .getLoader({
               foreignKey: 'userId',
-              page: { offset: 5, limit: 10 },
+              page: { offset: 0, limit: 5 },
               targetTable: 'posts',
               type: 'hasMany',
               orderBy: ['createdAt', 'asc'],
@@ -69,7 +69,7 @@ test.serial('BatchLoader + SelectionFilter', async (t) => {
           return batchLoader
             .getLoader({
               foreignKey: 'postId',
-              page: { offset: 5, limit: 10 },
+              page: { offset: 0, limit: 5 },
               targetTable: 'comments',
               type: 'hasMany',
               orderBy: ['createdAt', 'asc'],
