@@ -11,6 +11,8 @@ Set of useful functions for Knex + GraphQL.
 
 **Note: Only PostgreSQL is supported for now**
 
+![image](https://user-images.githubusercontent.com/10719495/126866657-a6ca9463-bac8-4056-9963-1f0aae8bf7fd.png)
+
 # Install
 
 ```
@@ -30,6 +32,8 @@ Creating a GraphQL service with a Relational Database is a hard thing. We should
 - Performance for querying relations. N+1 problem will happen if you don't use Dataloader.
 - `select *` make your server slow, but hard to filter columns based on requests.
 - Pagination. [Dataloader pattern is hard to implement pagination](https://github.com/graphql/dataloader/issues/231) without a hacky `union` or window functions. `knex-graphql-utils` uses `row_number()` window function to do it.
+
+With `knex-graphql-utils`, You can build performant GraphQL servers without hassle.
 
 # Getting Started
 
@@ -147,6 +151,12 @@ const resolver = {
 
 await selectionFilter.prepare(['users'], /_id/)
 ```
+
+# Limitation & Todo
+
+- Only PostgreSQL is supported for now.
+- Primary key is always assumed to be `id`.
+- Add `where` clause with paginating relationship.
 
 # Further reading
 
