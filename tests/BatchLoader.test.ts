@@ -110,3 +110,20 @@ test.serial('BatchLoader - hasManyThrough without pagination', async (t) => {
     .then((posts) => posts.flat())
     .then(t.snapshot)
 })
+
+// test.serial.only('BatchLoader - manyToMany with pagination', async (t) => {
+//   const batchLoader = new BatchLoader(knexWithLog)
+//   const loader = () =>
+//     batchLoader.getLoader({
+//       type: 'manyToMany',
+//       join: {
+//         from: 'posts.userId',
+//         to: 'comments.postId',
+//       },
+//       targetTable: 'comments',
+//       orderBy: ['posts.createdAt', 'asc'],
+//     })
+//   await Promise.all([loader().load(users[0]!.id), loader().load(users[1]!.id)])
+//     .then((posts) => posts.flat())
+//     .then(t.snapshot)
+// })
