@@ -30,6 +30,7 @@ const schema = gql`
     id: ID!
     title: String
     user: User!
+    userWithoutLib: User!
   }
 `
 
@@ -50,7 +51,7 @@ const resolvers = {
   User: {
     postsWithoutLib: (user: any, args: any) =>
       knex('posts')
-        .where({ id: user.id })
+        .where({ userId: user.id })
         .offset(((args.page || 1) - 1) * 10)
         .limit(10),
     posts: (user: any, args: any, ctx: any, info: GraphQLResolveInfo) =>
@@ -82,6 +83,7 @@ const resolvers = {
           },
         })
         .load(post.userId),
+    userWithoutLib: (post: any) => knex('users').where({ id: post.id }).first(),
   },
 }
 

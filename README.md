@@ -15,12 +15,11 @@ Set of useful functions for Knex + GraphQL.
 
 ### Before
 
-![image](https://user-images.githubusercontent.com/10719495/126906453-e380aa7c-9452-4905-92b4-2be56ccfa1c6.png)
+![image](https://user-images.githubusercontent.com/10719495/126906832-f991dd7d-b563-4fa2-9313-738f476d46c8.png)
 
 ### After
 
-![image](https://user-images.githubusercontent.com/10719495/126906449-80829ff6-c72a-4e9b-bbba-74f2e7a72885.png)
-
+![image](https://user-images.githubusercontent.com/10719495/126906862-71b456bd-82da-46d1-b6d3-acd1c3233885.png)
 
 # Install
 

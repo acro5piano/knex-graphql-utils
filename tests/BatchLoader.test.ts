@@ -13,15 +13,12 @@ test.serial('BatchLoader - hasMany with custom select', async (t) => {
       type: 'hasMany',
       orderBy: ['createdAt', 'asc'],
       queryModifier: (query) => {
-        query.select('createdAt')
+        query.select('id', 'userId', 'createdAt').orderBy('createdAt')
       },
     })
   await Promise.all([
     loader().load(users[0]!.id),
     loader().load(users[1]!.id),
-    loader().load(users[2]!.id),
-    loader().load(users[3]!.id),
-    loader().load(users[4]!.id),
   ]).then(t.snapshot)
 })
 
