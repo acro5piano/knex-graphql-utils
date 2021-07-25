@@ -11,7 +11,16 @@ Set of useful functions for Knex + GraphQL.
 
 **Note: Only PostgreSQL is supported for now**
 
-![image](https://user-images.githubusercontent.com/10719495/126866657-a6ca9463-bac8-4056-9963-1f0aae8bf7fd.png)
+# tl;dr
+
+### Before
+
+![image](https://user-images.githubusercontent.com/10719495/126906453-e380aa7c-9452-4905-92b4-2be56ccfa1c6.png)
+
+### After
+
+![image](https://user-images.githubusercontent.com/10719495/126906449-80829ff6-c72a-4e9b-bbba-74f2e7a72885.png)
+
 
 # Install
 
