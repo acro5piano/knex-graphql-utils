@@ -1,16 +1,6 @@
-import type { CreateLoaderProps, OrderByType } from '../BatchLoader'
-import { Knex } from 'knex'
-import Dataloader from 'dataloader'
+import type { BaseJoinableLoaderProps } from './BaseLoaderProps'
 
-type CreateHasManyThroughLoaderPageProps = Required<
-  Pick<CreateLoaderProps, 'targetTable' | 'knex' | 'join'>
-> & {
-  modifyQuery?: (query: Knex.QueryBuilder) => void
-  orderByType?: OrderByType
-  orderByColumn?: string
-  joinTable: string
-  joinColumn: string
-}
+import Dataloader from 'dataloader'
 
 export function createHasManyThroughLoader({
   targetTable,
@@ -21,7 +11,7 @@ export function createHasManyThroughLoader({
   join,
   joinTable,
   joinColumn,
-}: CreateHasManyThroughLoaderPageProps) {
+}: BaseJoinableLoaderProps) {
   return new Dataloader((ids: readonly string[]) => {
     const query = knex(targetTable)
       .select(`${targetTable}.*`, join.from)

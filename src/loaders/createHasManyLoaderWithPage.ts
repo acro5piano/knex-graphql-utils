@@ -1,14 +1,6 @@
-import type { CreateLoaderProps, OrderByType } from '../BatchLoader'
-import { Knex } from 'knex'
-import Dataloader from 'dataloader'
+import type { BaseLoaderProps } from './BaseLoaderProps'
 
-type CreateHasManyLoaderWithPageProps = Required<
-  Pick<CreateLoaderProps, 'targetTable' | 'foreignKey' | 'knex' | 'page'>
-> & {
-  modifyQuery?: (query: Knex.QueryBuilder) => void
-  orderByType?: OrderByType
-  orderByColumn?: string
-}
+import Dataloader from 'dataloader'
 
 export function createHasManyLoaderWithPage({
   targetTable,
@@ -18,7 +10,7 @@ export function createHasManyLoaderWithPage({
   orderByType,
   orderByColumn,
   modifyQuery,
-}: CreateHasManyLoaderWithPageProps) {
+}: BaseLoaderProps<'page' | 'foreignKey'>) {
   return new Dataloader((ids: readonly string[]) => {
     const subQuery = knex(targetTable)
       .select('*')

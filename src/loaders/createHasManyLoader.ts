@@ -1,14 +1,6 @@
-import type { CreateLoaderProps, OrderByType } from '../BatchLoader'
-import { Knex } from 'knex'
-import Dataloader from 'dataloader'
+import type { BaseLoaderProps } from './BaseLoaderProps'
 
-type CreateHasManyLoaderProps = Required<
-  Pick<CreateLoaderProps, 'targetTable' | 'foreignKey' | 'knex'>
-> & {
-  modifyQuery?: (query: Knex.QueryBuilder) => void
-  orderByType?: OrderByType
-  orderByColumn?: string
-}
+import Dataloader from 'dataloader'
 
 export function createHasManyLoader({
   targetTable,
@@ -17,7 +9,7 @@ export function createHasManyLoader({
   orderByType,
   orderByColumn,
   modifyQuery,
-}: CreateHasManyLoaderProps) {
+}: BaseLoaderProps<'foreignKey'>) {
   return new Dataloader((ids: readonly string[]) => {
     const query = knex(targetTable).whereIn(foreignKey, ids)
 

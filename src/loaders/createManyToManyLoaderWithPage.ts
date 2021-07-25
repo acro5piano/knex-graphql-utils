@@ -1,16 +1,6 @@
-import type { CreateLoaderProps, OrderByType } from '../BatchLoader'
-import { Knex } from 'knex'
-import Dataloader from 'dataloader'
+import type { BaseJoinableLoaderProps } from './BaseLoaderProps'
 
-type CreateManyToManyLoaderWithPageProps = Required<
-  Pick<CreateLoaderProps, 'targetTable' | 'knex' | 'join' | 'page'>
-> & {
-  modifyQuery?: (query: Knex.QueryBuilder) => void
-  orderByType?: OrderByType
-  orderByColumn?: string
-  joinTable: string
-  joinColumn: string
-}
+import Dataloader from 'dataloader'
 
 export function createManyToManyLoaderWithPage({
   targetTable,
@@ -22,7 +12,7 @@ export function createManyToManyLoaderWithPage({
   joinTable,
   joinColumn,
   page,
-}: CreateManyToManyLoaderWithPageProps) {
+}: BaseJoinableLoaderProps<'page'>) {
   return new Dataloader((ids: readonly string[]) => {
     const subQuery = knex(targetTable)
       .select(`${targetTable}.*`, join.from)

@@ -1,14 +1,5 @@
-import type { CreateLoaderProps, OrderByType } from '../BatchLoader'
-import { Knex } from 'knex'
+import type { BaseLoaderProps } from './BaseLoaderProps'
 import Dataloader from 'dataloader'
-
-type CreateBelongsToLoaderProps = Required<
-  Pick<CreateLoaderProps, 'targetTable' | 'knex'>
-> & {
-  modifyQuery?: (query: Knex.QueryBuilder) => void
-  orderByType?: OrderByType
-  orderByColumn?: string
-}
 
 export function createBelongsToLoader({
   targetTable,
@@ -16,7 +7,7 @@ export function createBelongsToLoader({
   orderByType,
   orderByColumn,
   modifyQuery,
-}: CreateBelongsToLoaderProps) {
+}: BaseLoaderProps) {
   return new Dataloader((ids: readonly string[]) => {
     const query = knex(targetTable).whereIn('id', ids)
 
