@@ -1,8 +1,13 @@
 import test from 'ava'
 
 import { knex, knexWithLog } from './knex'
+import { users, posts, comments } from './fixtures.json'
 
 test.before(async () => {
+  Object.assign(global, {
+    log: (a: any) => console.log(JSON.stringify(a, undefined, 2)),
+  })
+
   await knex.raw(`
     DROP SCHEMA public CASCADE;
     CREATE SCHEMA public;
@@ -29,6 +34,10 @@ test.before(async () => {
 
   // This initialize knex
   await knexWithLog.raw("select 'Hey start'")
+
+  await knex('users').insert(users)
+  await knex('posts').insert(posts)
+  await knex('comments').insert(comments)
 })
 
 test.after(async () => {

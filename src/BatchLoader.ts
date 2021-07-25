@@ -1,5 +1,7 @@
 import Dataloader from 'dataloader'
+import type { GraphQLResolveInfo } from 'graphql'
 import type { Knex } from 'knex'
+import type { SelectionFilter } from './SelectionFilter'
 
 export type SimplePagenatorArgs = {
   limit: number
@@ -19,16 +21,24 @@ interface GetLoaderProps {
   orderBy?: [string, string | undefined]
   page?: SimplePagenatorArgs
   queryModifier?: (query: Knex.QueryBuilder) => void
+  info?: GraphQLResolveInfo
 }
 
 interface CreateLoaderProps extends GetLoaderProps {
   knex: Knex
+  selectionFilter?: SelectionFilter
 }
 
 export class BatchLoader {
   private loaderMap = new Map<string, Dataloader<any, any>>()
+  private selectionFilter?: SelectionFilter
 
   constructor(private knex: Knex) {}
+
+  useSelectionFilter(selectionFilter: SelectionFilter) {
+    this.selectionFilter = selectionFilter
+    return this
+  }
 
   getLoader({
     type,
@@ -38,6 +48,7 @@ export class BatchLoader {
     page,
     queryModifier,
     orderBy,
+    info,
   }: GetLoaderProps) {
     const key = [
       type,
@@ -62,10 +73,12 @@ export class BatchLoader {
       targetTable,
       foreignKey,
       join,
-      knex: this.knex,
       page,
       queryModifier,
       orderBy,
+      knex: this.knex,
+      selectionFilter: this.selectionFilter,
+      info,
     })
     this.loaderMap.set(key, loader)
     return loader
@@ -81,10 +94,15 @@ function createLoader({
   knex,
   queryModifier,
   orderBy = ['id', 'asc'],
+  selectionFilter,
+  info,
 }: CreateLoaderProps) {
   const modifyQuery = (query: Knex.QueryBuilder) => {
     if (queryModifier) {
       queryModifier(query)
+    }
+    if (selectionFilter && info) {
+      query.select(selectionFilter.reduce({ info, table: targetTable }))
     }
   }
   const [orderByColumn, orderByType = 'ASC'] = orderBy
@@ -159,6 +177,7 @@ function createLoader({
             page.offset + page.limit,
           ])
           modifyQuery(query)
+
           return query.then((rows) =>
             ids.map((id) => rows.filter((row) => row[joinColumn] === id)),
           )

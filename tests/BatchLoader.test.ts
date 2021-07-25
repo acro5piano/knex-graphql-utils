@@ -1,13 +1,7 @@
 import test from 'ava'
-import { knex, knexWithLog } from './knex'
-import { users, posts, comments } from './fixtures.json'
+import { knexWithLog } from './knex'
+import { users } from './fixtures.json'
 import { BatchLoader } from '../src/index'
-
-test.before(async () => {
-  await knex('users').insert(users)
-  await knex('posts').insert(posts)
-  await knex('comments').insert(comments)
-})
 
 test.serial('BatchLoader - hasMany with custom select', async (t) => {
   const batchLoader = new BatchLoader(knexWithLog)

@@ -32,6 +32,7 @@ export class SelectionFilter {
         })
       }),
     )
+    return this
   }
 
   // Alias method
