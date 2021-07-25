@@ -1,6 +1,5 @@
 import test from 'ava'
-import { knex, knexWithLog } from './knex'
-import { users, posts } from './fixtures.json'
+import { knexWithLog } from './knex'
 import { SelectionFilter } from '../src'
 import {
   graphql,
@@ -10,11 +9,6 @@ import {
   GraphQLSchema,
   GraphQLObjectType,
 } from 'graphql'
-
-test.before(async () => {
-  await knex('users').insert(users)
-  await knex('posts').insert(posts)
-})
 
 const gql = String.raw
 
@@ -45,7 +39,7 @@ test.serial('SelectionFilter', async (t) => {
           knexWithLog('posts')
             .where({ userId: user.id })
             .select(
-              selectionFilter.filterGraphQLSelections({
+              selectionFilter.reduce({
                 info,
                 table: 'posts',
               }),
@@ -63,7 +57,7 @@ test.serial('SelectionFilter', async (t) => {
           resolve: (_root, _args, _ctx, info) =>
             knexWithLog('users')
               .select(
-                selectionFilter.filterGraphQLSelections({
+                selectionFilter.reduce({
                   info,
                   table: 'users',
                 }),

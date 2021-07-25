@@ -2,9 +2,22 @@ import type { GraphQLResolveInfo } from 'graphql'
 import type { Knex } from 'knex'
 import { fieldsList } from 'graphql-fields-list'
 
-interface FilterSelectionsProps {
+export interface FilterSelectionsProps {
   info: GraphQLResolveInfo
+
+  /**
+   * Table to filter columns.
+   *
+   * @example `selectionFilter.reduce({ info, table: 'users' })`
+   */
   table: string
+
+  /**
+   * By passing `alwaysLoadColumns`, these columns are always loaded.
+   * This is useful when a column is depends on other columns and loaded by resolvers.
+   *
+   * @example `selectionFilter.reduce({ info, table: 'users', alwaysLoadColumns: ['createdAt'] })`
+   */
   alwaysLoadColumns?: string[]
 }
 
@@ -19,12 +32,25 @@ export class SelectionFilter {
 
   constructor(private knex: Knex) {}
 
-  async prepare(tableNames: string[], pattern: RegExp) {
+  /**
+   * Prepare selection filter.
+   * Be aware that you should call this method to make selectionFilter work correctly.
+   *
+   * @param tableNames: string[]
+   *    Defines tables to inspect.
+   * @param ignorePattern: RegExp
+   *    If columns matches this pattern, these columns are always loaded.
+   *    This is useful for foreign keys which should not be filtered to load relations after batch loading.
+   * @example `prepare(['users', 'posts'], /_id$/)`
+   */
+  async prepare(tableNames: string[], ignorePattern: RegExp) {
     await Promise.all(
       tableNames.map(async (tableName) => {
         const rawColumns = await this.knex(tableName).columnInfo()
         const columns = Object.keys(rawColumns)
-        const referenceColumns = columns.filter((col) => pattern.test(col))
+        const referenceColumns = columns.filter((col) =>
+          ignorePattern.test(col),
+        )
         this.tableColumnsMap.set(tableName, {
           tableName,
           columns,
@@ -32,6 +58,7 @@ export class SelectionFilter {
         })
       }),
     )
+    return this
   }
 
   // Alias method

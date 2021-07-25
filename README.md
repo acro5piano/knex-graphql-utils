@@ -50,10 +50,12 @@ const schema = `
   }
   type User {
     id: ID!
+    name: String!
     posts(page: Int!): [Post!]!
   }
   type Post {
     id: ID!
+    title: String!
     user: User!
   }
 `
@@ -111,6 +113,37 @@ app.register(mercurius, {
 app.listen(8877).then(async () => {
   await selectionFilter.prepare(['users', 'posts'], /(_id)|(Id)$/)
 })
+```
+
+# Integrate `BatchLoader` and `SelectionFilter`
+
+You can tell `BatchLoader` to use `SelectionFilter`, and the loader automatically reduces the selection based on `info`.
+
+```typescript
+import { BatchLoader, SelectionFilter } from 'knex-graphql-utils'
+
+import { knex } from './knex' // Your knex instance
+
+const selectionFilter = new SelectionFilter(knex)
+const context = {
+  batchLoader: new BatchLoader(knex).useSelectionFilter(selectionFilter), // Attach SelectionFilter into batch loader
+}
+
+const resolver = {
+  User: {
+    posts: (user, args, ctx, info) =>
+      ctx.batchLoader
+        .getLoader({
+          type: 'hasMany',
+          foreignKey: 'userId',
+          targetTable: 'posts',
+          info, // By passing `info`, loader automatically reduces the selection
+        })
+        .load(user.id),
+  },
+}
+
+await selectionFilter.prepare(['users'], /_id/)
 ```
 
 # Further reading
