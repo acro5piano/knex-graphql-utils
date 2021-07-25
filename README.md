@@ -1,6 +1,8 @@
 # knex-graphql-utils
 
 [![npm version](https://badge.fury.io/js/knex-graphql-utils.svg)](https://badge.fury.io/js/knex-graphql-utils)
+[![test](https://github.com/acro5piano/knex-graphql-utils/actions/workflows/test.yml/badge.svg)](https://github.com/acro5piano/knex-graphql-utils/actions/workflows/test.yml)
+[![release](https://github.com/acro5piano/knex-graphql-utils/actions/workflows/release.yml/badge.svg)](https://github.com/acro5piano/knex-graphql-utils/actions/workflows/release.yml)
 
 Set of useful functions for Knex + GraphQL.
 
