@@ -5,6 +5,8 @@ import type { SelectionFilter } from './SelectionFilter'
 import { createHasManyLoaderWithPage } from './loaders/createHasManyLoaderWithPage'
 import { createHasManyLoader } from './loaders/createHasManyLoader'
 import { createHasManyThroughLoaderWithPage } from './loaders/createHasManyThroughLoaderWithPage'
+import { createManyToManyLoader } from './loaders/createManyToManyLoader'
+import { createManyToManyLoaderWithPage } from './loaders/createManyToManyLoaderWithPage'
 import { createHasManyThroughLoader } from './loaders/createHasManyThroughLoader'
 import { createBelongsToLoader } from './loaders/createBelongsToLoader'
 
@@ -22,8 +24,11 @@ export type OrderByType = 'ASC' | 'DESC' | 'asc' | 'desc'
  * - `belongsTo` n:1 relationship
  * - `hasManyThrough` 1:n relationship through an intermeidate table
  */
-export type LoaderType = 'hasMany' | 'hasManyThrough' | 'belongsTo'
-// | 'manyToMany'
+export type LoaderType =
+  | 'hasMany'
+  | 'hasManyThrough'
+  | 'belongsTo'
+  | 'manyToMany'
 
 export interface GetLoaderProps {
   /**
@@ -217,6 +222,31 @@ function createLoader({
           joinTable,
         })
       }
+    case 'manyToMany': {
+      if (!join) {
+        throw new Error('[BatchLoader] no `join` key found')
+      }
+      const [joinTable, joinColumn] = join.from.split('.')
+      if (!joinTable || !joinColumn) {
+        throw new Error('[BatchLoader] Invalid `from` key format')
+      }
+      if (page) {
+        return createManyToManyLoaderWithPage({
+          ...commonProps,
+          page,
+          join,
+          joinColumn,
+          joinTable,
+        })
+      } else {
+        return createManyToManyLoader({
+          ...commonProps,
+          join,
+          joinColumn,
+          joinTable,
+        })
+      }
+    }
     case 'belongsTo':
       if (page) {
         throw new Error(

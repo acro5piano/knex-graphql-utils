@@ -9,7 +9,7 @@ import { v5 } from 'uuid'
 // prettier-ignore
 const presidents = [ 'George Washington', 'John Adams', 'Thomas Jefferson', 'James Madison', 'James Monroe', 'John Quincy Adams', 'Andrew Jackson', 'Martin Van Buren', 'William Henry Harrison', 'John Tyler', 'James K. Polk', 'Zachary Taylor', 'Millard Fillmore', 'Franklin Pierce', 'James Buchanan', 'Abraham Lincoln', 'Andrew Johnson', 'Ulysses S. Grant', 'Rutherford B. Hayes', 'James A. Garfield', 'Chester A. Arthur', 'Grover Cleveland', 'Benjamin Harrison', 'Grover Cleveland (2nd term)', 'William McKinley', 'Theodore Roosevelt', 'William Howard Taft', 'Woodrow Wilson', 'Warren G. Harding', 'Calvin Coolidge', 'Herbert Hoover', 'Franklin D. Roosevelt', 'Harry S. Truman', 'Dwight D. Eisenhower', 'John F. Kennedy', 'Lyndon B. Johnson', 'Richard Nixon', 'Gerald Ford', 'Jimmy Carter', 'Ronald Reagan', 'George H. W. Bush', 'Bill Clinton', 'George W. Bush', 'Barack Obama', 'Donal Trump', 'Joe Biden', ]
 // prettier-ignore
-const presetTags = [ 'tag_a', 'tag_b', 'tag_c' ]
+const presetTags = [ 'tag_a', 'tag_b', 'tag_c', 'tag_d', 'tag_e' ]
 
 const t = dayjs('2021-07-22T08:53:06.074Z')
 
@@ -55,8 +55,8 @@ const posts = R.pipe(
 )
 
 const tagsPosts = R.zipWith(
-  repeatArray(tags, 30),
-  repeatArray(posts.slice(5), 10),
+  repeatArray(tags, 4),
+  posts.slice(0, 20),
   (tag, post) => ({
     id: makeId(tag.id, post.id),
     tagId: tag.id,
