@@ -21,6 +21,16 @@ Set of useful functions for Knex + GraphQL.
 
 ![image](https://user-images.githubusercontent.com/10719495/126906862-71b456bd-82da-46d1-b6d3-acd1c3233885.png)
 
+# Motivation
+
+Creating a GraphQL service with a Relational Database is a hard thing. We should take care of:
+
+- Performance for querying relations. N+1 problem will happen if you don't use Dataloader.
+- `select *` make your server slow, but hard to filter columns based on requests.
+- Pagination. [Dataloader pattern is hard to implement pagination](https://github.com/graphql/dataloader/issues/231) without a hacky `union` or window functions. `knex-graphql-utils` uses `row_number()` window function to do it.
+
+With `knex-graphql-utils`, You can build performant GraphQL servers without hassle.
+
 # Install
 
 ```
@@ -32,16 +42,6 @@ Or if you use Yarn:
 ```
 yarn add knex-graphql-utils
 ```
-
-# Motivation
-
-Creating a GraphQL service with a Relational Database is a hard thing. We should take care of:
-
-- Performance for querying relations. N+1 problem will happen if you don't use Dataloader.
-- `select *` make your server slow, but hard to filter columns based on requests.
-- Pagination. [Dataloader pattern is hard to implement pagination](https://github.com/graphql/dataloader/issues/231) without a hacky `union` or window functions. `knex-graphql-utils` uses `row_number()` window function to do it.
-
-With `knex-graphql-utils`, You can build performant GraphQL servers without hassle.
 
 # Getting Started
 
