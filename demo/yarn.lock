@@ -708,10 +708,10 @@ jsonc-parser@^3.0.0:
   resolved "https://registry.yarnpkg.com/jsonc-parser/-/jsonc-parser-3.0.0.tgz#abdd785701c7e7eaca8a9ec8cf070ca51a745a22"
   integrity sha512-fQzRfAbIBnR0IQvftw9FJveWiHp72Fg20giDrHz6TdfB12UH/uue0D3hm57UB5KgAVuniLMCaS8P1IMj9NR7cA==
 
-knex-graphql-utils@^0.0.3:
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/knex-graphql-utils/-/knex-graphql-utils-0.0.3.tgz#cec22e3122f14616237d4ba226afbbc636529cb1"
-  integrity sha512-bcZ8dxizs88lo1DjnnegOGTX2z5O6spG6zbDYAggAZhK4mNA5i0VwrBSv7OLt7OIUGI8sfEqLjH/ur5jawOlJw==
+knex-graphql-utils@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/knex-graphql-utils/-/knex-graphql-utils-0.0.6.tgz#ea404d5698204c567d41c0461236cf13503dc29b"
+  integrity sha512-GtFD0aj64yQBNgifefwwDkHoe6afxXjvklmAdB3p6jco4EiVhLqOIDSH5uEORNsBUR4JrDZTAjpxSRYeN621TA==
   dependencies:
     dataloader "^2.0.0"
     graphql-fields-list "^2.2.4"

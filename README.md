@@ -160,6 +160,4 @@ await selectionFilter.prepare(['users'], /_id/)
 
 # Further reading
 
-For more details, please visit [demo](https://github.com/acro5piano/knex-graphql-utils/blob/master/demo/index.ts) . You can see log output like this:
-
-![image](https://user-images.githubusercontent.com/10719495/126866657-a6ca9463-bac8-4056-9963-1f0aae8bf7fd.png)
+For more details, please visit [demo](https://github.com/acro5piano/knex-graphql-utils/blob/master/demo/index.ts) and [unit tests](https://github.com/acro5piano/knex-graphql-utils/blob/master/tests/BatchLoader.test.ts).

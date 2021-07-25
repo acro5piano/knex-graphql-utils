@@ -6,7 +6,7 @@
   "dependencies": {
     "fastify": "^3.19.2",
     "knex": "^0.95.7",
-    "knex-graphql-utils": "^0.0.3",
+    "knex-graphql-utils": "^0.0.6",
     "knex-little-logger": "^0.0.2",
     "knex-stringcase": "^1.4.5",
     "mercurius": "^8.1.0"

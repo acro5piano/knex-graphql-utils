@@ -17,11 +17,13 @@ const schema = gql`
   type Query {
     users: [User!]!
     user: User
+    usersWithoutLib: [User!]!
   }
   type User {
     id: ID!
     name: String
-    posts(page: Int!): [Post!]!
+    posts(page: Int = 1): [Post!]!
+    postsWithoutLib(page: Int = 1): [Post!]!
     createdAt: String!
   }
   type Post {
@@ -35,16 +37,22 @@ const selectionFilter = new SelectionFilter(knex)
 
 const resolvers = {
   Query: {
-    users: (_user: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
+    users: (_root: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
       knex('users')
         .select(selectionFilter.reduce({ info, table: 'users' }))
         .limit(10),
-    user: (_user: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
+    usersWithoutLib: () => knex('users').limit(10),
+    user: (_root: any, _args: any, _ctx: any, info: GraphQLResolveInfo) =>
       knex('users')
         .select(selectionFilter.reduce({ info, table: 'users' }))
         .first(),
   },
   User: {
+    postsWithoutLib: (user: any, args: any) =>
+      knex('posts')
+        .where({ id: user.id })
+        .offset(((args.page || 1) - 1) * 10)
+        .limit(10),
     posts: (user: any, args: any, ctx: any, info: GraphQLResolveInfo) =>
       ctx.batchLoader
         .getLoader({
@@ -109,7 +117,7 @@ app.listen(8877).then(async () => {
   await knex('users').insert(users)
   await knex('posts').insert(posts)
 
-  knexLittleLogger(knex)
+  knexLittleLogger(knex, { bindings: false })
 
   console.log('\n=> Open http://localhost:8877/graphiql')
 })
