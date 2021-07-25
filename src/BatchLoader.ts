@@ -8,19 +8,69 @@ export type SimplePagenatorArgs = {
   offset: number
 }
 
-type LoaderType = 'hasMany' | 'hasManyThrough' | 'belongsTo'
+/**
+ * LoaderType represents how to load relationships.
+ *
+ * - `hasMany` 1:n relationship
+ * - `belongsTo` n:1 relationship
+ * - `hasManyThrough` 1:n relationship through an intermeidate table
+ */
+export type LoaderType = 'hasMany' | 'hasManyThrough' | 'belongsTo'
 
-interface GetLoaderProps {
+export interface GetLoaderProps {
+  /**
+   * LoaderType represents how to load relationships.
+   */
   type: LoaderType
+
+  /**
+   * Target table to load relations from.
+   *
+   * @example `targetTable: 'users'`
+   */
   targetTable: string
+
+  /**
+   * Foreign key of `targetTable`. By default, it points to `id`.
+   *
+   * @example `foreignKey: 'userId'`
+   */
   foreignKey?: string
+
+  /**
+   * Foreign key of `targetTable`. By default, it points to `id`. Required for `hasManyThrough` relations.
+   *
+   * @example `join: { form: 'posts.userId', to: 'comments.postId' }
+   */
   join?: {
     from: string
     to: string
   }
+
+  /**
+   * How to order the relations. Default to `id` ASC.
+   *
+   * @example `orderBy: ['createdAt', 'desc']`
+   */
   orderBy?: [string, string | undefined]
+
+  /**
+   * Adds limit and offset to the relations. Default to nothing, meaning that loads all records of the relationship.
+   *
+   * @example `page: { limit: 20, offset: 60 }`
+   */
   page?: SimplePagenatorArgs
+
+  /**
+   * Modify knex query after load.
+   *
+   * @example `queryModifier: query => query.select(knex.raw("count('id')")).groupBy('id')`
+   */
   queryModifier?: (query: Knex.QueryBuilder) => void
+
+  /**
+   * If you pass `info` and call `useSelectionFilter` before resolving relationship, BatchLoader will reduce column selections on execution.
+   */
   info?: GraphQLResolveInfo
 }
 
