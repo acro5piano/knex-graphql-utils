@@ -8,7 +8,6 @@ import { v5 } from 'uuid'
 
 // prettier-ignore
 const presidents = [ 'George Washington', 'John Adams', 'Thomas Jefferson', 'James Madison', 'James Monroe', 'John Quincy Adams', 'Andrew Jackson', 'Martin Van Buren', 'William Henry Harrison', 'John Tyler', 'James K. Polk', 'Zachary Taylor', 'Millard Fillmore', 'Franklin Pierce', 'James Buchanan', 'Abraham Lincoln', 'Andrew Johnson', 'Ulysses S. Grant', 'Rutherford B. Hayes', 'James A. Garfield', 'Chester A. Arthur', 'Grover Cleveland', 'Benjamin Harrison', 'Grover Cleveland (2nd term)', 'William McKinley', 'Theodore Roosevelt', 'William Howard Taft', 'Woodrow Wilson', 'Warren G. Harding', 'Calvin Coolidge', 'Herbert Hoover', 'Franklin D. Roosevelt', 'Harry S. Truman', 'Dwight D. Eisenhower', 'John F. Kennedy', 'Lyndon B. Johnson', 'Richard Nixon', 'Gerald Ford', 'Jimmy Carter', 'Ronald Reagan', 'George H. W. Bush', 'Bill Clinton', 'George W. Bush', 'Barack Obama', 'Donal Trump', 'Joe Biden', ]
-
 // prettier-ignore
 const presetTags = [ 'tag_a', 'tag_b', 'tag_c' ]
 
@@ -21,14 +20,21 @@ const getTimeStamps = (index: number) => {
   }
 }
 
+const makeId = (...names: Array<string | number>) =>
+  v5(names.map(String).join(':'), '15584352-dc37-48bb-8551-bbe5e8366606')
+
+function repeatArray<T>(arr: Array<T>, n: number) {
+  return R.range(1, n).flatMap(() => arr)
+}
+
 const users = presidents.map((name, i) => ({
-  id: v5(name, '21abcf53-d232-43aa-b73c-fa638d3e6aff'),
+  id: makeId(name, i),
   name,
   ...getTimeStamps(i),
 }))
 
 const tags = presetTags.map((name, i) => ({
-  id: v5(name, '8902bd0d-f76b-4856-be3f-e6cdb4475240'),
+  id: makeId(name, i),
   name,
   ...getTimeStamps(i),
 }))
@@ -39,7 +45,7 @@ const posts = R.pipe(
     R.pipe(
       R.range(1, 10),
       R.map((i) => ({
-        id: v5(`${user.id}${i}`, 'e137bbed-6d1b-4fe7-b51e-a68ce840c305'),
+        id: makeId(user.id, i),
         userId: user.id,
         title: `${user.name}'s post - ${i}`,
         ...getTimeStamps(i),
@@ -48,15 +54,11 @@ const posts = R.pipe(
   ),
 )
 
-function repeatArray<T>(arr: Array<T>, n: number) {
-  return R.range(1, n).flatMap(() => arr)
-}
-
 const tagsPosts = R.zipWith(
   repeatArray(tags, 30),
   repeatArray(posts.slice(5), 10),
   (tag, post) => ({
-    id: v5(tag.id + post.id, '15584352-dc37-48bb-8551-bbe5e8366606'),
+    id: makeId(tag.id, post.id),
     tagId: tag.id,
     postId: post.id,
   }),
@@ -68,7 +70,7 @@ const comments = R.pipe(
     R.pipe(
       R.range(1, 10),
       R.map((i) => ({
-        id: v5(`${post.id}${i}`, '83cdad18-842f-452d-bee0-097021b29798'),
+        id: makeId(post.id, i),
         postId: post.id,
         content: `comment for ${post.title} - ${i}`,
         ...getTimeStamps(i),
