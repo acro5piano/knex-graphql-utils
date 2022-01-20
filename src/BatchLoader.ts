@@ -82,6 +82,13 @@ export interface GetLoaderProps {
   queryModifier?: (query: Knex.QueryBuilder) => void
 
   /**
+   * Modify knex query for inner subquery while pagination.
+   *
+   * @example `subQueryModifier: query => query.where({ type: 'human' })`
+   */
+  subQueryModifier?: (query: Knex.QueryBuilder) => void
+
+  /**
    * If you pass `info` and call `useSelectionFilter` before resolving relationship, BatchLoader will reduce column selections on execution.
    */
   info?: GraphQLResolveInfo
@@ -110,6 +117,7 @@ export class BatchLoader {
     join,
     page,
     queryModifier,
+    subQueryModifier,
     orderBy,
     info,
   }: GetLoaderProps) {
@@ -133,6 +141,7 @@ export class BatchLoader {
       join,
       page,
       queryModifier,
+      subQueryModifier,
       orderBy,
       knex: this.knex,
       selectionFilter: this.selectionFilter,
@@ -151,6 +160,7 @@ function createLoader({
   page,
   knex,
   queryModifier,
+  subQueryModifier,
   orderBy = ['id', 'asc'],
   selectionFilter,
   info,
@@ -177,6 +187,7 @@ function createLoader({
     orderByType,
     knex,
     modifyQuery,
+    modifyInnerQuery: subQueryModifier,
   }
 
   switch (type) {

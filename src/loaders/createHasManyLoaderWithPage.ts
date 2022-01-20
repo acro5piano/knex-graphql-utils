@@ -10,12 +10,16 @@ export function createHasManyLoaderWithPage({
   orderByType,
   orderByColumn,
   modifyQuery,
+  modifyInnerQuery,
 }: BaseLoaderProps<'page' | 'foreignKey'>) {
   return new Dataloader((ids: readonly string[]) => {
     const subQuery = knex(targetTable)
       .select('*')
       .whereIn(foreignKey, ids)
       .as('_t')
+    if (modifyInnerQuery) {
+      modifyInnerQuery(subQuery)
+    }
     if (orderByType && orderByColumn) {
       subQuery.rowNumber(
         'relation_index',

@@ -41,6 +41,30 @@ test.serial('BatchLoader - hasMany with pagination', async (t) => {
   ]).then(t.snapshot)
 })
 
+test.serial(
+  'BatchLoader - hasMany with pagination and modifyInnerQuery',
+  async (t) => {
+    const batchLoader = new BatchLoader(knexWithLog)
+    const loader = () =>
+      batchLoader.getLoader({
+        foreignKey: 'userId',
+        page: { offset: 0, limit: 10 },
+        targetTable: 'posts',
+        type: 'hasMany',
+        orderBy: ['createdAt', 'asc'],
+        subQueryModifier: (subQuery) =>
+          subQuery.where({ title: "George Washington's post - 1" }),
+      })
+    await Promise.all([
+      loader().load(users[0]!.id),
+      loader().load(users[1]!.id),
+      loader().load(users[2]!.id),
+      loader().load(users[3]!.id),
+      loader().load(users[4]!.id),
+    ]).then(t.snapshot)
+  },
+)
+
 test.serial('BatchLoader - hasMany without pagination', async (t) => {
   const batchLoader = new BatchLoader(knexWithLog)
   const loader = () =>

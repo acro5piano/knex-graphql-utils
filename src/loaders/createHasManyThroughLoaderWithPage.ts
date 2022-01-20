@@ -9,6 +9,7 @@ export function createHasManyThroughLoaderWithPage({
   orderByType,
   orderByColumn,
   modifyQuery,
+  modifyInnerQuery,
   join,
   joinTable,
   joinColumn,
@@ -19,6 +20,9 @@ export function createHasManyThroughLoaderWithPage({
       .innerJoin(joinTable, `${joinTable}.id`, join.to)
       .whereIn(join.from, ids)
       .as('_t')
+    if (modifyInnerQuery) {
+      modifyInnerQuery(subQuery)
+    }
     if (orderByType && orderByColumn) {
       subQuery.rowNumber(
         'relation_index',

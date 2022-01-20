@@ -5,6 +5,7 @@ export type BaseLoaderProps<
   TKey extends keyof CreateLoaderProps = 'targetTable',
 > = Required<Pick<CreateLoaderProps, 'targetTable' | 'knex' | TKey>> & {
   modifyQuery?: (query: Knex.QueryBuilder) => void
+  modifyInnerQuery?: (query: Knex.QueryBuilder) => void
   orderByType?: OrderByType
   orderByColumn?: string
 }
